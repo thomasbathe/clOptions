@@ -14,9 +14,9 @@ from pydoc import locate
 from ast import literal_eval
 
 
-class clOptions:
+class optionHandler:
 
-  def getOptionList(self):
+  def __getOptionList(self):
 
     optionList = []
 
@@ -37,7 +37,7 @@ class clOptions:
         print('Warning: Option "{0}" is reserved!'.format(option))
         continue
 
-      if option in optionHistory or option in self.optionValues:
+      if option in optionHistory or option in self.__optionValues:
         print("Warning: Option {0} already exists! Skipping Option.\n".format(option))
         continue
 
@@ -60,6 +60,10 @@ class clOptions:
 
 
       if option[1] == "-":
+        if len(option) == 3:
+          print("Warning: Double hyphen option cannot be a single character!\n")
+          continue
+
         status = input('\nDefault status for Option "{0}" (boolean)\n  '.format(option)) or False
         try:
           default_value = str(literal_eval(default_value))
@@ -89,17 +93,16 @@ class clOptions:
 
     return optionList
 
+  def __setDefault(self, specificOption = None, removeOption = None, addOptions = False):
 
-  def setDefault(self, specificOption = None, removeOption = None, addOptions = False):
+    if removeOption and not removeOption in self.__optionValues:
+      exit('Error: {0} has no option "{1}"'.format(self.__ScriptName,removeOption))
 
-    if removeOption and not removeOption in self.optionValues:
-      exit('Error: {0} has no option "{1}"'.format(self.ScriptName,removeOption))
-
-    if os.path.exists(self.helpFile):
-      os.remove(self.helpFile)
+    if os.path.exists(self.__helpFile):
+      os.remove(self.__helpFile)
 
 
-    with open(self.optionFile,"r") as f:
+    with open(self.__optionFile,"r") as f:
       optionList = f.readlines()
 
 
@@ -159,7 +162,7 @@ class clOptions:
       optionList[i] = "{:<20}{:<25}{:<25}\n".format(option, str(status), description)
 
     if addOptions:
-      optionList.extend(self.getOptionList())
+      optionList.extend(self.__getOptionList())
 
     
     optionList.sort()
@@ -174,16 +177,16 @@ class clOptions:
     optionList = optionList[i:]+optionList[:i]
 
 
-    with open(self.optionFile, "w") as f:
+    with open(self.__optionFile, "w") as f:
       f.writelines(optionList)
 
     return
 
-  def createHelpFile(self):
+  def __createHelpFile(self):
     n = 30
     nDescr = 50
 
-    with open(self.optionFile,"r") as f:
+    with open(self.__optionFile,"r") as f:
       lines = f.readlines()
 
     lines.sort()
@@ -268,32 +271,32 @@ class clOptions:
         helpList.append("{0:>{n}}        {1:<{nDescr}}\n".format("", descrBlock[i], n=n, nDescr=nDescr))
 
     
-    with open(self.helpFile, "w") as f:
+    with open(self.__helpFile, "w") as f:
       f.writelines(helpList)
 
     return
       
 
-  def readOptionDict(self):
+  def __readOptionDict(self):
     
-    if not os.path.exists(self.optionFile):
+    if not os.path.exists(self.__optionFile):
       return
 
 
-    with open(self.optionFile, "r") as f:
+    with open(self.__optionFile, "r") as f:
       optionLines = f.readlines()
 
     for line in optionLines:
       option, value, description = line.split(None, 2)
 
       if option[0] == "-" and not option[1] == "-":
-        self.optionValues[option] = literal_eval(value)
-        self.optionDescriptions[option] = description
+        self.__optionValues[option] = literal_eval(value)
+        self.__optionDescriptions[option] = description
         continue
 
       if len(value.split(",")) == 1:
-        self.optionValues[option] = literal_eval(value)
-        self.optionDescriptions[option] = description
+        self.__optionValues[option] = literal_eval(value)
+        self.__optionDescriptions[option] = description
         continue
 
       status, val = value.split(",")
@@ -305,25 +308,28 @@ class clOptions:
           val = literal_eval(val)
         except:
           pass
-      self.optionValues[option] = {}
-      self.optionValues[option]["status"] = literal_eval(status)
-      self.optionValues[option]["value"] = val
-      self.optionDescriptions[option] = description
+      self.__optionValues[option] = {}
+      self.__optionValues[option]["status"] = literal_eval(status)
+      self.__optionValues[option]["value"] = val
+      self.__optionDescriptions[option] = description
         
     return 
 
 
-  def initializeOptions(self):
+  def __initializeOptions(self):
 
-    if os.path.exists(self.helpFile):
-      os.remove(self.helpFile)
+    if not os.path.exists(self.__SettingsPath):
+      os.mkdir(self.__SettingsPath)
 
-    if os.path.exists(self.optionFile):
-      self.optionValues = {}
-      self.optionDescriptions = {}
-      os.remove(self.optionFile)
+    if os.path.exists(self.__helpFile):
+      os.remove(self.__helpFile)
 
-    optionList = self.getOptionList()
+    if os.path.exists(self.__optionFile):
+      self.__optionValues = {}
+      self.__optionDescriptions = {}
+      os.remove(self.__optionFile)
+
+    optionList = self.__getOptionList()
 
     optionList.sort()
 
@@ -337,55 +343,55 @@ class clOptions:
 
       optionList = optionList[i:]+optionList[:i]
 
-    with open(self.optionFile, "w") as f:
+    with open(self.__optionFile, "w") as f:
       f.writelines(optionList)
 
     return
 
 
-  def getOptions(self):
+  def __getOptions(self):
     #for i in range(1,len(clArguments)):
     # option = clArguments[i]
 
-    if len(self.options) == 0:
+    if len(self.__options) == 0:
       return
 
-    if self.options[0] == "--init":
-      self.initializeOptions()
+    if self.__options[0] == "--init":
+      self.__initializeOptions()
       exit(0)
 
 
-    if len(self.optionValues) == 0:
-      exit('Error: No options found for {0}! Use "--init" to create an option dictionary!'.format(self.ScriptName))
+    if len(self.__optionValues) == 0:
+      exit('Error: No options found for {0}! Use "--init" to create an option dictionary!'.format(self.__ScriptName))
 
-    if "--set-default" in self.options[0]:
+    if "--set-default" in self.__options[0]:
       
-      if len(self.options[0].split("=",1)) == 2:
-        self.setDefault(specificOption = self.options[0].split("=",1)[1])
+      if len(self.__options[0].split("=",1)) == 2:
+        self.__setDefault(specificOption = self.__options[0].split("=",1)[1])
       else:
-        self.setDefault()
+        self.__setDefault()
       exit(0)
 
-    if "--remove" in self.options[0]:
-      self.setDefault(removeOption=self.options[0].split("=")[1])
+    if "--remove" in self.__options[0]:
+      self.__setDefault(removeOption=self.__options[0].split("=")[1])
       exit(0)
 
-    if "--add" == self.options[0]:
-      if len(self.options[0].split("=")) > 1:
+    if "--add" == self.__options[0]:
+      if len(self.__options[0].split("=")) > 1:
         exit('Error: Option "--add" takes no arguments!')
 
-      self.setDefault(addOptions=True)
+      self.__setDefault(addOptions=True)
       exit(0)
 
 
-    for option in self.options:
+    for option in self.__options:
       
       if option == "--help" or option == "-h":
 
-        if not os.path.exists(self.helpFile):
-          self.createHelpFile()
+        if not os.path.exists(self.__helpFile):
+          self.__createHelpFile()
 
-        with open(self.helpFile,"r") as f:
+        with open(self.__helpFile,"r") as f:
           print("".join(f.readlines()))
         exit(0)
 
@@ -403,8 +409,8 @@ class clOptions:
             #option = option.replace("--","")
 
             # check if option exists in optionDict
-            if not option.split("=")[0] in self.optionValues:
-              exit("Error: {0} has no option {1}!".format(self.ScriptName, option))
+            if not option.split("=")[0] in self.__optionValues:
+              exit("Error: {0} has no option {1}!".format(self.__ScriptName, option))
 
 
             # check if a value was added to the double hyphen option
@@ -412,34 +418,34 @@ class clOptions:
               option, value = option.split("=")
 
               # check if option takes values
-              if not type(self.optionValues[option]) == dict:
+              if not type(self.__optionValues[option]) == dict:
                 exit("Error: Option {0} takes no input Arguments!".format(option))
 
               # set toggle status to True
-              self.optionValues[option]["status"] = True
+              self.__optionValues[option]["status"] = True
               
               # cast input value to needed type and set the value
-              if type(self.optionValues[option]["value"]) == type:
-                self.optionValues[option]["value"] = self.optionValues[option]["value"](value)
+              if type(self.__optionValues[option]["value"]) == type:
+                self.__optionValues[option]["value"] = self.__optionValues[option]["value"](value)
               else:
-                self.optionValues[option]["value"] = type(self.optionValues[option]["value"])(value)
+                self.__optionValues[option]["value"] = type(self.__optionValues[option]["value"])(value)
 
             else:
 
               # check if option has a value
-              if type(self.optionValues[option]) == dict:
+              if type(self.__optionValues[option]) == dict:
 
                 # check if option has a default value set
-                if type(self.optionValues[option]["value"]) == type:
+                if type(self.__optionValues[option]["value"]) == type:
                   exit("Error: Option {0} has no default value!".format(option))
                   
                 # toggle status of option with value
                 else:
-                  self.optionValues[option]["status"] = not self.optionValues[option]["status"]
+                  self.__optionValues[option]["status"] = not self.__optionValues[option]["status"]
 
               # toggle status of option without value
               else:
-                self.optionValues[option] = not self.optionValues[option]
+                self.__optionValues[option] = not self.__optionValues[option]
 
           # list element is a single hyphen option
           else:
@@ -448,35 +454,62 @@ class clOptions:
             # for every option in the concatenated option list check if option exists and then toggle its value
             for opt in option[1:]:
               opt = "-{0}".format(opt)
-              if not opt in self.optionValues:
-                exit("Error: {0} has no option {1}!".format(self.ScriptName, opt))
+              if not opt in self.__optionValues:
+                exit("Error: {0} has no option {1}!".format(self.__ScriptName, opt))
                 
-              self.optionValues[opt] =  not self.optionValues[opt]
+              self.__optionValues[opt] =  not self.__optionValues[opt]
 
     return
 
 
-
-  def __init__(self, sysArgs):
+  def ___init__(self, sysArgs):
 
     
-    self.ScriptName = sysArgs[0].rsplit("/",1)[1]
-    self.files = list(filter(lambda x: not x[0] == "-", sys.argv[1:]))
-    self.options = list(filter(lambda x: x[0] == "-", sys.argv[1:]))
+    self.__ScriptName = sysArgs[0].rsplit("/",1)[1]
+    self.__files = list(filter(lambda x: not x[0] == "-", sys.argv[1:]))
+    self.__options = list(filter(lambda x: x[0] == "-", sys.argv[1:]))
 
-    self.SettingsPath = "{}/settings".format(os.path.dirname(os.path.realpath(__file__)))
+    self.__SettingsPath = "{}/settings".format(os.path.dirname(os.path.realpath(__file__)))
 
-    self.optionFile = "{0}/{1}_clOptions.conf".format(self.SettingsPath, self.ScriptName)
-    self.helpFile = "{0}/{1}_clOptions_help.txt".format(self.SettingsPath, self.ScriptName)
-    print(self.optionFile)
-    print(self.helpFile)
-    exit()
+    self.__optionFile = "{0}/{1}_clOptions.conf".format(self.__SettingsPath, self.__ScriptName)
+    self.__helpFile = "{0}/{1}_clOptions_help.txt".format(self.__SettingsPath, self.__ScriptName)
 
-    self.optionValues = {}
-    self.optionDescriptions = {}
+    self.__optionValues = {}
+    self.__optionDescriptions = {}
 
-    self.readOptionDict()
-    self.getOptions()
+    self.__readOptionDict()
+    self.__getOptions()
     
     return
+
+
+
+# Getter functions to access extracted files option state and values
+
+  def getFiles(self):
+    return self.__files
+
+  def getState(self, option):
+    if len(option) == 1:
+      tmpOption = "-{}".format(option)
+    else:
+      tmpOption = "--{}".format(option)
+
+    if not tmpOption in self.__optionValues:
+      exit("Error: {0} has no option {1}!".format(self.__ScriptName, tmpOption))
+
+    if len(option) == 1:
+      return self.__optionValues[tmpOption]
+    else:
+      return self.__optionValues[tmpOption]["status"]
+
+  def getValue(self, option):
+    if len(option) == 1:
+      exit("Error: Single hyphen option cannot have a value!")
+    tmpOption = "--{}".format(option)
     
+    if not tmpOption in self.__optionValues:
+      exit("Error: {0} has no option {1}!".format(self.__ScriptName, tmpOption))
+
+    return self.__optionValues[tmpOption]["value"]    
+
