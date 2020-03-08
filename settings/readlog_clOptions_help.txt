@@ -1,0 +1,67 @@
+                        Option        Description                                       
+
+                            -P        Print the Potential Energy of the System to the   
+                                      Terminal, if "-p" is enabled.                     
+                                      (Default: Status=True)                            
+
+                            -T        Print the Title of the Calculation to the         
+                                      Terminal, if "-p" is enabled.                     
+                                      (Default: Status=True)                            
+
+                            -b        Print the used Basis Set to the Terminal, if "-p" 
+                                      is enabled. (Default: Status=True)                
+
+                            -c        Print the Charge and the Multiplicity of the      
+                                      System to the Terminal, if "-p" is enabled.       
+                                      (Default: Status=False)                           
+
+                            -d        Print the Total Dipolemoment of the System to the 
+                                      Terminal, if "-p" is enabled.                     
+                                      (Default: Status=False)                           
+
+                            -e        Print the Number of alpha and beta Electrons to   
+                                      the Terminal, if "-p" is enabled.                 
+                                      (Default: Status=False)                           
+
+                            -f        Print the used Functional to the Terminal, if "-p"
+                                      is enabled. (Default: Status=True)                
+
+                            -j        Print the Job Type to the Terminal, if "-p" is    
+                                      enabled. (Default: Status=True)                   
+
+                            -m        Print information of the Molecules in the System  
+                                      to the Terminal, if "-p" is enabled.              
+                                      (Default: Status=True)                            
+
+                            -o        Print information if the HOMO and LUMO Orbital for
+                                      alpha and beta Electrons as well es the deviation 
+                                      of the Spin-Symmetry, if "-p" is enabled.         
+                                      (Default: Status=True)                            
+
+                            -p        Print content of the logfile to the Terminal.     
+                                      (Default: Status=False)                           
+
+                            -s        Print information of the Solvent to the Terminal, 
+                                      if "-p" is enabled. (Default: Status=False)       
+
+                            -t        Print the Status of the Termination of the        
+                                      Calculation to the Terminal, if "-p" is enabled.  
+                                      (Default: Status=True)                            
+
+   --charge-calc=<class 'str'>        Compute Atomic Charges using specified Method with
+                                      Multiwfn. (Default: Status=False, Value=ADCH)     
+
+   --charge-show=<class 'str'>        Print Atomic Charges using specified Method to the
+                                      Terminal, if "-p" is enabled.                     
+                                      (Default: Status=True, Value=ADCH)                
+
+                --charge-types        List possible Methods for Charge calculation with 
+                                      Multiwfn. (Default: Status=False)                 
+
+                    --redo-dat        Rewrite ".dat" File. (Default: Status=False)      
+
+        --update=<class 'str'>        Update Atomic Charges calculated with specified   
+                                      Method as well as Formatted Checkpoint File if    
+                                      necessary (Value=None updates the Formatted       
+                                      Checkpoint File only).                            
+                                      (Default: Status=False, Value=ADCH)               

@@ -1,0 +1,39 @@
+                        Option        Description                                       
+
+           --AMO=<class 'int'>        Number of Cube Files to generate for Alpha MOs    
+                                      starting from the value of "--start". The Sign of 
+                                      the Value corresponds to ascending or descending  
+                                      from the Starting State.                          
+                                      (Default: Status=False, Value=0)                  
+
+        --AStart=<class 'str'>        Starting State for the Calculation of Alpha MO    
+                                      Cube Files. Value can be either the MO Number of  
+                                      HOMO/LUMO+x. HOMO and LUMO are converted to the MO
+                                      Number accordingly.                               
+                                      (Default: Status=False, Value=nan)                
+
+           --BMO=<class 'int'>        Number of Cube Files to generate for Beta MOs     
+                                      starting from the value of "--start". The Sign of 
+                                      the Value corresponds to ascending or descending  
+                                      from the Starting State.                          
+                                      (Default: Status=False, Value=0)                  
+
+        --BStart=<class 'str'>        Starting State for the Calculation of Beta MO Cube
+                                      Files. Value can be either the MO Number of       
+                                      HOMO/LUMO+x. HOMO and LUMO are converted to the MO
+                                      Number accordingly.                               
+                                      (Default: Status=False, Value=nan)                
+
+            --MO=<class 'int'>        Number of Cube Files to generate starting from the
+                                      value of "--start". The sign of the Value         
+                                      corresponds to ascending or descending from the   
+                                      Starting State. (Default: Status=True, Value=1)   
+
+         --procs=<class 'int'>        Number of Threads that are used to calculate the  
+                                      Cube Files. Each Calculation takes 2 Threads.     
+                                      (Default: Status=True, Value=12)                  
+
+         --start=<class 'str'>        Starting State for the Calculation of Cube Files. 
+                                      Value can be either the MO Number or HOMO/LUMO+x. 
+                                      HOMO and LUMO are converted to the MO Number      
+                                      accordingly. (Default: Status=True, Value=HOMO)   

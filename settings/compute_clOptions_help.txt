@@ -1,0 +1,6 @@
+                        Option        Description                                       
+
+                            -v        Increase verbosity. (Default: Status=False)       
+
+          --time=<class 'str'>        Specify computation time on clusters. For example:
+                                      1d2h3m4s (Default: Status=False, Value=3d)        
