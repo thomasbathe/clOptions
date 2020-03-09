@@ -16,10 +16,10 @@ from ast import literal_eval
 
 class optionHandler:
 
-  def __init__(self, sysArgs):
+  def __init__(self):
 
-    self.__ScriptName = sysArgs[0].rsplit("/",1)[1]
-    self.__ScriptPath = os.path.realpath(sysArgs[0]).rsplit("/",1)[0]
+    self.__ScriptName = sys.argv[0].rsplit("/",1)[1]
+    self.__ScriptPath = os.path.realpath(sys.argv[0]).rsplit("/",1)[0]
     self.__files = list(filter(lambda x: not x[0] == "-", sys.argv[1:]))
     self.__options = list(filter(lambda x: x[0] == "-", sys.argv[1:]))
 
