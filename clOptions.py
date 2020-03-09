@@ -16,6 +16,26 @@ from ast import literal_eval
 
 class optionHandler:
 
+  def __init__(self, sysArgs):
+
+    self.__ScriptName = sysArgs[0].rsplit("/",1)[1]
+    self.__ScriptPath = os.path.realpath(sysArgs[0]).rsplit("/",1)[0]
+    self.__files = list(filter(lambda x: not x[0] == "-", sys.argv[1:]))
+    self.__options = list(filter(lambda x: x[0] == "-", sys.argv[1:]))
+
+    self.__SettingsPath = "{}/.settings".format(self.__ScriptPath)
+
+    self.__optionFile = "{0}/{1}_clOptions.conf".format(self.__SettingsPath, self.__ScriptName)
+    self.__helpFile = "{0}/{1}_clOptions_help.txt".format(self.__SettingsPath, self.__ScriptName)
+
+    self.__optionValues = {}
+    self.__optionDescriptions = {}
+
+    self.__readOptionDict()
+    self.__getOptions()
+    
+    return
+
   def __getOptionList(self):
 
     optionList = []
@@ -276,7 +296,6 @@ class optionHandler:
 
     return
       
-
   def __readOptionDict(self):
     
     if not os.path.exists(self.__optionFile):
@@ -315,7 +334,6 @@ class optionHandler:
         
     return 
 
-
   def __initializeOptions(self):
 
     if not os.path.exists(self.__SettingsPath):
@@ -347,7 +365,6 @@ class optionHandler:
       f.writelines(optionList)
 
     return
-
 
   def __getOptions(self):
     #for i in range(1,len(clArguments)):
@@ -462,29 +479,7 @@ class optionHandler:
     return
 
 
-  def ___init__(self, sysArgs):
-
-    
-    self.__ScriptName = sysArgs[0].rsplit("/",1)[1]
-    self.__files = list(filter(lambda x: not x[0] == "-", sys.argv[1:]))
-    self.__options = list(filter(lambda x: x[0] == "-", sys.argv[1:]))
-
-    self.__SettingsPath = "{}/settings".format(os.path.dirname(os.path.realpath(__file__)))
-
-    self.__optionFile = "{0}/{1}_clOptions.conf".format(self.__SettingsPath, self.__ScriptName)
-    self.__helpFile = "{0}/{1}_clOptions_help.txt".format(self.__SettingsPath, self.__ScriptName)
-
-    self.__optionValues = {}
-    self.__optionDescriptions = {}
-
-    self.__readOptionDict()
-    self.__getOptions()
-    
-    return
-
-
-
-# Getter functions to access extracted files option state and values
+# Getter functions to access extracted files, option state, values (and the option dictionary)
 
   def getFiles(self):
     return self.__files
@@ -498,11 +493,12 @@ class optionHandler:
     if not tmpOption in self.__optionValues:
       exit("Error: {0} has no option {1}!".format(self.__ScriptName, tmpOption))
 
-    if len(option) == 1:
+    if len(option) == 1 or not type(self.__optionValues[tmpOption]) == dict:
       return self.__optionValues[tmpOption]
     else:
       return self.__optionValues[tmpOption]["status"]
-
+      
+      
   def getValue(self, option):
     if len(option) == 1:
       exit("Error: Single hyphen option cannot have a value!")
@@ -511,5 +507,10 @@ class optionHandler:
     if not tmpOption in self.__optionValues:
       exit("Error: {0} has no option {1}!".format(self.__ScriptName, tmpOption))
 
+    if not type(self.__optionValues[tmpOption]) == dict:
+      exit("Error: {0} has no value".format(tmpOption))
+
     return self.__optionValues[tmpOption]["value"]    
 
+  # def getOptions(self):
+  #   return self.__optionValues
