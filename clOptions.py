@@ -16,12 +16,16 @@ from ast import literal_eval
 
 class optionHandler:
 
-  def __init__(self):
+  def __init__(self, args=None):
 
     self.__ScriptName = sys.argv[0].rsplit("/",1)[1]
     self.__ScriptPath = os.path.realpath(sys.argv[0]).rsplit("/",1)[0]
-    self.__files = list(filter(lambda x: not x[0] == "-", sys.argv[1:]))
-    self.__options = list(filter(lambda x: x[0] == "-", sys.argv[1:]))
+    if not args:
+      self.__files = list(filter(lambda x: not x[0] == "-", sys.argv[1:]))
+      self.__options = list(filter(lambda x: x[0] == "-", sys.argv[1:]))
+    else:
+      self.__files = list(filter(lambda x: not x[0] == "-", args))
+      self.__options = list(filter(lambda x: x[0] == "-", args))
 
     self.__SettingsPath = "{}/.settings".format(self.__ScriptPath)
 
@@ -148,8 +152,8 @@ class optionHandler:
       value = None
 
 
-      if len(status.split(",")) == 2:
-        status, value = status.split(",")
+      if len(status.split(",",1)) == 2:
+        status, value = status.split(",",1)
 
 
       #if bool(input("Change Default status of {0}? (Current: {1})\n ".format(option,status)) or False):
@@ -229,8 +233,8 @@ class optionHandler:
         description = ""
 
 
-      if len(status.split(",")) == 2:
-        status, value = status.split(",")
+      if len(status.split(",",1)) == 2:
+        status, value = status.split(",",1)
         
         if type(locate(value)) == type:
           valType = locate(value)
@@ -313,12 +317,12 @@ class optionHandler:
         self.__optionDescriptions[option] = description
         continue
 
-      if len(value.split(",")) == 1:
+      if len(value.split(",",1)) == 1:
         self.__optionValues[option] = literal_eval(value)
         self.__optionDescriptions[option] = description
         continue
 
-      status, val = value.split(",")
+      status, val = value.split(",",1)
 
       if type(locate(val)) == type:
         val = locate(val)
