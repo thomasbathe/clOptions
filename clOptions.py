@@ -110,7 +110,7 @@ class optionHandler:
 
       description = str(input('\nDescription for Option "{0}"\n  '.format(option)) or "No description given!")
 
-      optionLine = "{:<20}{:<15}{:<25}\n".format(option, default_value, description)
+      optionLine = "{:<20}{:<30}          {:<25}\n".format(option, default_value, description)
 
       optionList.append(optionLine)
       optionHistory.append(option)
@@ -183,7 +183,7 @@ class optionHandler:
         description = "No description given!"
 
 
-      optionList[i] = "{:<20}{:<25}{:<25}\n".format(option, str(status), description)
+      optionList[i] = "{:<20}{:<30}          {:<25}\n".format(option, str(status), description)
 
     if addOptions:
       optionList.extend(self.__getOptionList())
@@ -207,7 +207,7 @@ class optionHandler:
     return
 
   def __createHelpFile(self):
-    n = 30
+    n = 50
     nDescr = 50
 
     with open(self.__optionFile,"r") as f:
